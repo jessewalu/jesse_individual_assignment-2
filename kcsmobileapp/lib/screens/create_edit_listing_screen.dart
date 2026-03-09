@@ -49,8 +49,15 @@ class _CreateEditListingScreenState extends State<CreateEditListingScreen> {
     });
   }
 
-  void _save() {
+  Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
+    if (_latitude == null || _longitude == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select a location')),
+      );
+      return;
+    }
+
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final listing = Listing(
       id: widget.listing?.id ?? '',
@@ -64,17 +71,28 @@ class _CreateEditListingScreenState extends State<CreateEditListingScreen> {
       createdBy: auth.uid ?? '',
       timestamp: widget.listing?.timestamp ?? Timestamp.now(),
     );
+    
     final provider = Provider.of<ListingProvider>(context, listen: false);
     if (widget.listing == null) {
-      provider.createListing(listing);
+      await provider.createListing(listing);
     } else {
-      provider.updateListing(listing);
+      await provider.updateListing(listing);
     }
-    Navigator.pop(context);
+
+                    if (!context.mounted) return;
+                    if (provider.error != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(provider.error!)),
+                      );
+                    } else {
+                      Navigator.pop(context);
+                    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = Provider.of<ListingProvider>(context).isLoading;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.listing == null ? 'New Listing' : 'Edit Listing'),
@@ -90,9 +108,21 @@ class _CreateEditListingScreenState extends State<CreateEditListingScreen> {
                 decoration: const InputDecoration(labelText: 'Name'),
                 validator: (v) => v == null || v.isEmpty ? 'Required' : null,
               ),
-              TextFormField(
-                controller: _categoryController,
+              DropdownButtonFormField<String>(
+                value: _categoryController.text.isNotEmpty ? _categoryController.text : null,
                 decoration: const InputDecoration(labelText: 'Category'),
+                items: const ['Cafés', 'Pharmacies', 'Restaurants', 'Parks', 'Tourist']
+                    .map((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                onChanged: (newValue) {
+                  setState(() {
+                    _categoryController.text = newValue ?? '';
+                  });
+                },
                 validator: (v) => v == null || v.isEmpty ? 'Required' : null,
               ),
               TextFormField(
@@ -127,7 +157,12 @@ class _CreateEditListingScreenState extends State<CreateEditListingScreen> {
                 ],
               ),
               const SizedBox(height: 20),
-              ElevatedButton(onPressed: _save, child: const Text('Save')),
+              ElevatedButton(
+                onPressed: isLoading ? null : _save,
+                child: isLoading
+                    ? const CircularProgressIndicator()
+                    : const Text('Save'),
+              ),
             ],
           ),
         ),

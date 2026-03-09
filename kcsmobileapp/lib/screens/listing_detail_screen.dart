@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/listing_model.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/foundation.dart';
 
@@ -30,14 +31,26 @@ class ListingDetailScreen extends StatelessWidget {
             const SizedBox(height: 16),
             SizedBox(
               height: 200,
-              child: GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  target: position,
-                  zoom: 14,
+              child: FlutterMap(
+                options: MapOptions(
+                  initialCenter: position,
+                  initialZoom: 14,
                 ),
-                markers: {
-                  Marker(markerId: MarkerId(listing.id), position: position),
-                },
+                children: [
+                  TileLayer(
+                    urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                  ),
+                  MarkerLayer(
+                    markers: [
+                      Marker(
+                        point: position,
+                        width: 40,
+                        height: 40,
+                        child: const Icon(Icons.location_on, color: Colors.red, size: 40),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 8),

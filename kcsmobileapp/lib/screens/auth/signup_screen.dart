@@ -43,7 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         _emailController.text.trim(),
                         _passwordController.text.trim(),
                       );
-                      if (!mounted) return;
+                      if (!context.mounted) return;
                       final shouldPop = auth.error == null;
                       if (shouldPop) Navigator.of(context).pop();
                     },

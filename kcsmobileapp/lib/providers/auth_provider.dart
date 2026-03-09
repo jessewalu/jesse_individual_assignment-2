@@ -16,7 +16,7 @@ class AuthProvider extends ChangeNotifier {
   AuthProvider() {
     _authService.authStateChanges.listen((user) {
       _user = user;
-      if (user != null) {
+      if (user != null && user.emailVerified) {
         _loadProfile();
       }
       notifyListeners();
@@ -37,8 +37,9 @@ class AuthProvider extends ChangeNotifier {
           'email': user.email,
           'displayName': user.displayName,
         });
+        await _authService.signOut();
+        error = 'Verification email sent. Please verify your email before logging in.';
       }
-      error = null;
     } catch (e) {
       error = e.toString();
     }
@@ -50,8 +51,13 @@ class AuthProvider extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
     try {
-      await _authService.signIn(email, password);
-      error = null;
+      final user = await _authService.signIn(email, password);
+      if (user != null && !user.emailVerified) {
+        await _authService.signOut();
+        error = 'Please verify your email before logging in.';
+      } else {
+        error = null;
+      }
     } catch (e) {
       error = e.toString();
     }
@@ -68,6 +74,7 @@ class AuthProvider extends ChangeNotifier {
     final doc = await _firestore.usersRef.doc(_user!.uid).get();
     if (doc.exists) {
       profile = AppUser.fromMap(doc.data() as Map<String, dynamic>);
+      notifyListeners();
     }
   }
 }

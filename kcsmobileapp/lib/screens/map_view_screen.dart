@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/listing_provider.dart';
@@ -13,20 +14,33 @@ class MapViewScreen extends StatelessWidget {
     final markers = listings
         .map(
           (l) => Marker(
-            markerId: MarkerId(l.id),
-            position: LatLng(l.latitude, l.longitude),
-            infoWindow: InfoWindow(title: l.name, snippet: l.category),
+            point: LatLng(l.latitude, l.longitude),
+            width: 40,
+            height: 40,
+            child: GestureDetector(
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${l.name} - ${l.category}')),
+                );
+              },
+              child: const Icon(Icons.location_on, color: Colors.red, size: 40),
+            ),
           ),
         )
-        .toSet();
+        .toList();
 
     return Scaffold(
-      body: GoogleMap(
-        initialCameraPosition: const CameraPosition(
-          target: LatLng(1.95, 30.05),
-          zoom: 12,
+      body: FlutterMap(
+        options: const MapOptions(
+          initialCenter: LatLng(1.95, 30.05),
+          initialZoom: 12,
         ),
-        markers: markers,
+        children: [
+          TileLayer(
+            urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+          ),
+          MarkerLayer(markers: markers),
+        ],
       ),
     );
   }

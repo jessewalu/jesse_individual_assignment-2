@@ -32,13 +32,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Directory'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.my_library_books),
             label: 'My Listings',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.map), label: 'Map'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Map View',
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings),
             label: 'Settings',
@@ -46,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),
     );

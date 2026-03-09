@@ -41,7 +41,7 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
                   title: Text(item.name),
                   subtitle: Text(item.category),
                   trailing: PopupMenuButton<String>(
-                    onSelected: (value) {
+                    onSelected: (value) async {
                       if (value == 'edit') {
                         Navigator.push(
                           context,
@@ -51,14 +51,45 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
                           ),
                         );
                       } else if (value == 'delete') {
-                        provider.deleteListing(item.id);
+                        final confirm = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Delete Listing'),
+                            content: const Text('Are you sure you want to delete this listing?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, false),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () => Navigator.pop(context, true),
+                                child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                              ),
+                            ],
+                          ),
+                        );
+
+                        if (confirm == true) {
+                          await provider.deleteListing(item.id);
+                          if (!context.mounted) return;
+                          
+                          if (provider.error != null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(provider.error!)),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Listing deleted successfully')),
+                            );
+                          }
+                        }
                       }
                     },
                     itemBuilder: (context) => [
                       const PopupMenuItem(value: 'edit', child: Text('Edit')),
                       const PopupMenuItem(
                         value: 'delete',
-                        child: Text('Delete'),
+                        child: Text('Delete', style: TextStyle(color: Colors.red)),
                       ),
                     ],
                   ),

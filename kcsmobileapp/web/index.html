@@ -31,6 +31,22 @@
 
   <title>kcsmobileapp</title>
   <link rel="manifest" href="manifest.json">
+  <!-- Firebase JS SDK (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script>
+    // Web initialization configuration copied from firebase_options.dart
+    const firebaseConfig = {
+      apiKey: "AIzaSyAImYRsfJ-yVQzwSdsJt94EadFC69S7Ca0",
+      authDomain: "kcsmobileapp-7a5c8.firebaseapp.com",
+      projectId: "kcsmobileapp-7a5c8",
+      storageBucket: "kcsmobileapp-7a5c8.firebasestorage.app",
+      messagingSenderId: "1018809096666",
+      appId: "1:1018809096666:web:4136adc7daa2126bb648e3",
+      measurementId: "G-NDEK7D53GQ"
+    };
+    firebase.initializeApp(firebaseConfig);
+  </script>
 </head>
 <body>
   <script src="flutter_bootstrap.js" async></script>
