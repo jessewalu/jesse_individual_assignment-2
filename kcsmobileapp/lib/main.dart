@@ -28,6 +28,7 @@ class MyApp extends StatelessWidget {
         builder: (context, auth, _) {
           return MaterialApp(
             title: 'Kigali City Services',
+            debugShowCheckedModeBanner: false,
             theme: ThemeData(primarySwatch: Colors.blue),
             home: auth.isLoggedIn ? const HomeScreen() : const LoginScreen(),
           );

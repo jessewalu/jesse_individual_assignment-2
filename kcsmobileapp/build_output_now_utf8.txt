@@ -1,0 +1,46 @@
+﻿Running Gradle task 'assembleRelease'...                        
+flutter : Picked up 
+JAVA_TOOL_OPTIONS: 
+-Dfile.encoding=UTF-8
+At line:1 char:1
++ flutter build apk > 
+build_output_now.txt 2>&1
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (Picked   
+  up JAVA_....encoding=UTF   
+ -8:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+
+FAILURE: Build failed with 
+an exception.
+
+* What went wrong:
+Could not determine the 
+dependencies of task ':cloud_
+firestore:compileReleaseJavaW
+ithJavac'.
+> Cannot query the value of 
+this provider because it has 
+no value available.
+
+* Try:
+> Run with --stacktrace 
+option to get the stack 
+trace.
+> Run with --info or --debug 
+option to get more log 
+output.
+> Run with --scan to get 
+full insights.
+> Get more help at 
+https://help.gradle.org.
+
+BUILD FAILED in 3s
+Running Gradle task 'assembleRelease'...                            3.9s
+Gradle task assembleRelease 
+failed with exit code 1

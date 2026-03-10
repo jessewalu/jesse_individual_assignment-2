@@ -52,9 +52,9 @@ class _CreateEditListingScreenState extends State<CreateEditListingScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     if (_latitude == null || _longitude == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a location')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select a location')));
       return;
     }
 
@@ -71,7 +71,7 @@ class _CreateEditListingScreenState extends State<CreateEditListingScreen> {
       createdBy: auth.uid ?? '',
       timestamp: widget.listing?.timestamp ?? Timestamp.now(),
     );
-    
+
     final provider = Provider.of<ListingProvider>(context, listen: false);
     if (widget.listing == null) {
       await provider.createListing(listing);
@@ -79,14 +79,14 @@ class _CreateEditListingScreenState extends State<CreateEditListingScreen> {
       await provider.updateListing(listing);
     }
 
-                    if (!context.mounted) return;
-                    if (provider.error != null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(provider.error!)),
-                      );
-                    } else {
-                      Navigator.pop(context);
-                    }
+    if (!context.mounted) return;
+    if (provider.error != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(provider.error!)));
+    } else {
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -109,15 +109,23 @@ class _CreateEditListingScreenState extends State<CreateEditListingScreen> {
                 validator: (v) => v == null || v.isEmpty ? 'Required' : null,
               ),
               DropdownButtonFormField<String>(
-                value: _categoryController.text.isNotEmpty ? _categoryController.text : null,
+                initialValue: _categoryController.text.isNotEmpty
+                    ? _categoryController.text
+                    : null,
                 decoration: const InputDecoration(labelText: 'Category'),
-                items: const ['Cafés', 'Pharmacies', 'Restaurants', 'Parks', 'Tourist']
-                    .map((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
+                items:
+                    const [
+                      'Cafés',
+                      'Pharmacies',
+                      'Restaurants',
+                      'Parks',
+                      'Tourist',
+                    ].map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
                 onChanged: (newValue) {
                   setState(() {
                     _categoryController.text = newValue ?? '';
